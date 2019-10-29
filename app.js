@@ -1,7 +1,10 @@
 const inquirer = require('inquirer')
 const chalk = require('chalk')
 const fs = require('fs')
+const moment = require('moment')
 const words = ['html', 'css', 'javascript', 'node package manager', 'mysql', 'monogo', 'linux', 'visual studio code', 'sql servers']
+
+let start = ''
 
 // array of letters guessed
 let lettersGuessed = []
@@ -43,11 +46,28 @@ const fillBlanks = (letter, words, blanks) => {
 
   return blankArr.join(' ')
 }
+
+const fillLeaderboard = (word, lapse) => {
+  inquirer.prompt({
+    type: 'input',
+    name: 'name',
+    message: 'Please Type In Your Name: '
+  })
+  .then(({ name }) => {
+    console.log(word, lapse, name)
+  })
+}
 // function to confirm whether the use has lost or won the game
 const checkStatus = (word, blanks) => {
   const wordNoSpaces = word.split(' ').join('')
   if (lettersGuessedCount === wordNoSpaces.length) {
-    console.log('win')
+    const lapse = moment().format('X') - start
+    console.log(`
+    -----Congrats! You Won The Game-----
+    The word was: ${word}
+    It took you ${lapse}seconds to finish the game!
+    `)
+    fillLeaderboard(word, lapse)
   } else if (guessesLeft <= 0) {
     console.log(`
     -----Oh No! You Lost The Game!-----
@@ -95,6 +115,7 @@ const gameMove = (word, blanks) => {
 }
 //  what to do when use begins new game
 const newGame = () => {
+  start = moment().format('X')
   const randWord = getRandom(words)
   const blanks = genBlanks(randWord)
 
@@ -104,7 +125,17 @@ const newGame = () => {
 
 //  what to do when use asks to view leaderboard
 const leaderboard = () => {
-  console.log('Displaying leaderboard...')
+  fs.readFile('leaderboard.txt', 'utf8', (e, data) => {
+    if (e) {
+      console.log(e)
+    }
+    let submissions = data.split(' | ')
+    submissions.pop()
+
+    submissions.sort((a, b) => {
+   
+    })
+  })
 
 }
 
