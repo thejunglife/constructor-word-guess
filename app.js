@@ -47,6 +47,7 @@ const fillBlanks = (letter, words, blanks) => {
   return blankArr.join(' ')
 }
 
+// function to fill leaderboard
 const fillLeaderboard = (word, lapse) => {
   inquirer.prompt({
     type: 'input',
@@ -54,7 +55,9 @@ const fillLeaderboard = (word, lapse) => {
     message: 'Please Type In Your Name: '
   })
   .then(({ name }) => {
-    console.log(word, lapse, name)
+    const data = `User: ${name} / Word: ${word} / Time: ${lapse} seconds | ` 
+    fs.appendFile('leaderboard.txt', data, e => e ? console.log(e) : null)
+    leaderboard()
   })
 }
 // function to confirm whether the use has lost or won the game
@@ -133,8 +136,15 @@ const leaderboard = () => {
     submissions.pop()
 
     submissions.sort((a, b) => {
-   
+    let secondsA = parseInt(a.split(`Time: `)[1].split(' seconds')[0])
+    
+    let secondsB = parseInt(b.split('Time: ')[1].split(' seconds')[0])
+    return secondsA - secondsB
     })
+    console.log(`
+    \n-----LEADERBOARD-----\n${submissions.map(sub => `${sub}\n`).join('')}
+    `)
+    main()
   })
 
 }
